@@ -1,0 +1,108 @@
+---
+title: "p8105_HW5"
+author: "Yongzi Yu yy3103"
+output: github_document
+---
+
+I'm an R Markdown document! 
+
+```{r}
+library(tidyverse)
+library(broom)
+library(purrr)
+```
+# Problem1
+
+
+#load data
+homicide= 
+  read_csv("./homicide-data.csv")%>%
+  janitor::clean_names() %>%
+  mutate(
+    city_state = paste(city,",",state)
+  ) #create a variable
+
+
+
+#describe the raw data set
+
+
+
+#obtain total number of homicides and unsolved
+summary_total=
+  homicide %>%
+  group_by(city) %>%
+  summarise(total=n())
+
+summary_unsolved=
+  homicide %>%
+  filter(disposition =="Closed without arrest" |disposition == "Open/No arrest") %>%
+  group_by(city) %>%
+  summarise(total=n())
+
+#prop test for Baltimore
+bal_total=
+  summary_total %>%
+  filter(city == "Baltimore")
+bal_unsolved=
+  summary_unsolved %>%
+  filter(city == "Baltimore")
+
+res=
+  prop.test(x=bal_unsolved$total,n=bal_total$total)
+res
+res %>%
+  broom::tidy()
+res 
+
+
+  
+
+
+# Problem2
+```{r}
+files=
+  list.files (path = "./data")
+files
+
+file_data=
+  list.files (path = "./data") %>%
+  map_df(read_csv)
+file_data
+
+combine=cbind(files,file_data)
+combine
+
+tidy=
+  combine%>%
+  pivot_longer(
+    week_1:week_8,
+    names_to = "week",
+    values_to = "value"
+  )
+tidy
+
+```
+
+# Problem 3
+```{r}
+library(tidyverse)
+set.seed(10)
+iris_with_missing = iris %>% 
+  map_df(~replace(.x, sample(1:150, 20), NA)) %>%
+  mutate(Species = as.character(Species))
+iris_with_missing
+
+missing = function(x) {
+  if (is.character(x$Species)) {
+    x$Species %>% replace_na('abc')
+  }
+  else {for (i in 1:4){
+    x[,i][is.na(x[,i])]=mean(x[,i],na.rm=TRUE)
+  }
+  }
+}
+
+a=missing(iris_with_missing)
+a
+```
