@@ -13,7 +13,6 @@ library(purrr)
 ```
 # Problem1
 
-
 #load data
 homicide= 
   read_csv("./homicide-data.csv")%>%
@@ -23,10 +22,7 @@ homicide=
   ) #create a variable
 
 
-
 #describe the raw data set
-
-
 
 #obtain total number of homicides and unsolved
 summary_total=
@@ -55,10 +51,6 @@ res %>%
   broom::tidy()
 res 
 
-
-  
-
-
 # Problem2
 ```{r}
 files=
@@ -82,7 +74,12 @@ tidy=
   )
 tidy
 
+plot=
+  tidy %>%
+  ggplot(aes(x=week,y=value,group=files,color=files))+geom_point()+geom_line()
+plot
 ```
+Based on the plot, it shows that experiment group has higher base line values and values increase as week increases. 
 
 # Problem 3
 ```{r}
@@ -91,18 +88,20 @@ set.seed(10)
 iris_with_missing = iris %>% 
   map_df(~replace(.x, sample(1:150, 20), NA)) %>%
   mutate(Species = as.character(Species))
-iris_with_missing
+print(iris_with_missing)
 
-missing = function(x) {
-  if (is.character(x$Species)) {
-    x$Species %>% replace_na('abc')
+missing=function(x){
+  if (is.numeric(x)){
+  group_mean=mean(x,na.rm=TRUE)
+  x=replace_na(x,group_mean) #x is a column
   }
-  else {for (i in 1:4){
-    x[,i][is.na(x[,i])]=mean(x[,i],na.rm=TRUE)
-  }
-  }
+  else if (is.character(x)){
+    x=replace_na(x,"virginica")
+}
 }
 
-a=missing(iris_with_missing)
-a
+map_df(iris_with_missing, missing)
+
+
+
 ```
