@@ -55,15 +55,13 @@ res
 ```{r}
 files=
   list.files (path = "./data")
-files
+
 
 file_data=
   list.files (path = "./data") %>%
   map_df(read_csv)
-file_data
 
 combine=cbind(files,file_data)
-combine
 
 tidy=
   combine%>%
@@ -72,11 +70,10 @@ tidy=
     names_to = "week",
     values_to = "value"
   )
-tidy
 
 plot=
   tidy %>%
-  ggplot(aes(x=week,y=value,group=files,color=files))+geom_point()+geom_line()
+  ggplot(aes(x=week,y=value,group=files,color=files))+geom_point()+geom_line()+ ggtitle('Weekly chart for control and experimental arm.')
 plot
 ```
 Based on the plot, it shows that experiment group has higher base line values and values increase as week increases. 
