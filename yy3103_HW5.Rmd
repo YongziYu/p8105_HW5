@@ -53,8 +53,15 @@ res
 
 # Problem2
 ```{r}
+
 files=
   list.files (path = "./data")
+
+files = do.call(c, lapply(files, function(x){
+  x <- gsub('.csv', '', x, fixed = TRUE)
+  if(grepl('^con_', x)) return(paste0('Control_arm#', x))
+  return(paste0('Experimental_arm#', x))
+}))
 
 
 file_data=
@@ -73,10 +80,10 @@ tidy=
 
 plot=
   tidy %>%
-  ggplot(aes(x=week,y=value,group=files,color=files))+geom_point()+geom_line()+ ggtitle('Weekly chart for control and experimental arm.')
+  ggplot(aes(x=week,y=value,group=files,color=files))+geom_point()+geom_line() + ggtitle('Weekly chart for control and experimental arm.')
 plot
 ```
-Based on the plot, it shows that experiment group has higher base line values and values increase as week increases. 
+Based on the plot, it shows that experiment group has higher base line values and values increase as week increases.Control group has lower base line values and there are more fluctuations. 
 
 # Problem 3
 ```{r}
